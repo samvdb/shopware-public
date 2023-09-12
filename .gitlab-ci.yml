@@ -17,7 +17,7 @@ variables:
     # Set memory limit to infinite to avoid running out of memory issues
     COMPOSER_MEMORY_LIMIT: -1
     REDIS_HOST: "redis://127.0.0.1:6379"
-    BUILDER_IMAGE: shopware/development:8.1-composer-2
+    BUILDER_IMAGE: shopware/development:8.2-composer-2
     DATABASE_URL: 'mysql://root:root@localhost'
     RABBITMQ_QUEUE_SUFFIX: "suffix"
 
