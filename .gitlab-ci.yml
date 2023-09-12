@@ -17,7 +17,7 @@ variables:
     # Set memory limit to infinite to avoid running out of memory issues
     COMPOSER_MEMORY_LIMIT: -1
     REDIS_HOST: "redis://127.0.0.1:6379"
-    BUILDER_IMAGE: gitlab.myvink.be:5005/vink/docker-shopware/builder-8.2:5cc29be1cebe6b4d73f2c1c889adfa20c8e79a7a43536c7910c305e769df6b1a
+    BUILDER_IMAGE: gitlab.myvink.be:5005/vink/docker-shopware/builder-8.2:1.0
     DATABASE_URL: 'mysql://root:root@localhost'
     RABBITMQ_QUEUE_SUFFIX: "suffix"
 
