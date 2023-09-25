@@ -1,0 +1,21 @@
+{
+  "name": "swag/hello-world",
+  "description": "Skeleton plugin",
+  "type": "shopware-platform-plugin",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "HelloWorld\\": "src/"
+    }
+  },
+  "require": {
+    "shopware/core": "6.5.*"
+  },
+  "extra": {
+    "shopware-plugin-class": "HelloWorld\\HelloWorld",
+    "label": {
+      "de-DE": "Skeleton plugin",
+      "en-GB": "Skeleton plugin"
+    }
+  }
+}
