@@ -8,25 +8,68 @@ on:
     types: 
       - opened
       - reopened
-    branches: 
-      - dev
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install dependencies
-        uses: php-actions/composer@v6
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
         with:
-          php_version: "8.1"
-          php_extensions: redis exif
-          command: composer update
+          php-version: '8.1'
 
-      - name: Debug
+      - name: Setup Nodejs 
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
         run: |
-          ls -la
-          cd deployments/docker/app
-          ls -la
+          composer update
+          composer install --no-dev --no-interaction --optimize-autoloader --ignore-platform-req=ext-amqp
+
+      - name: Build assets
+        run: |
+          chmod +x bin/build-storefront.sh
+          ./bin/build-storefront.sh
+        env:
+          CI: 1
+          SHOPWARE_SKIP_THEME_COMPILE: true
+          PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: true
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set image name for dev
+        if: github.event_name == 'pull_request'
+        run: |
+          NAME=${{ github.repository }}-dev
+          echo "IMAGE_NAME=$NAME" >> $GITHUB_ENV 
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
