@@ -1,0 +1,32 @@
+name: Build and Publish
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: 
+      - opened
+      - reopened
+    branches: 
+      - dev
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        uses: php-actions/composer@v6
+        with:
+          php_version: "8.1"
+          php_extensions: redis exif
+          command: composer update
+
+      - name: Debug
+        run: |
+          ls -la
+          cd deployments/docker/app
+          ls -la
